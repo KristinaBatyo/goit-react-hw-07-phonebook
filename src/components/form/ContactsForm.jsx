@@ -1,24 +1,27 @@
 import { ContactsContainer, ContactsLabel, ContactsButton, ContactsInput} from './ContactsForm.styled.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStatusContacts } from '../../redux/contacts';
-import { setStatusName } from '../../redux/name';
-import { setStatusNumber } from '../../redux/number';
 import { nanoid } from 'nanoid';
+import { useState } from 'react';
+import { addContacts } from 'redux/operations';
+import { getContacts } from 'redux/selectors';
+
 
 export const  ContactsForm = () => {
-        const contacts = useSelector(state => state.contacts);
-        const name = useSelector(state => state.name);
-        const number = useSelector(state => state.number);
-        const dispatch = useDispatch();
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
+
+    const contacts = useSelector(getContacts);
+    const dispatch = useDispatch();
+
         
         function hendleChange (e) {
             const { name, value } = e.currentTarget;
                 switch (name) {
                     case 'name':
-                    dispatch(setStatusName(value));
+                    setName(value);
                     break;
                     case 'number':
-                    dispatch(setStatusNumber(value));
+                    setNumber(value);
                     break;
                     default:
                     return;
@@ -33,13 +36,13 @@ export const  ContactsForm = () => {
             ) {
             return alert(`${name} is already in contacts.`);
             }
-            dispatch(setStatusContacts({ name, number }));
+            dispatch(addContacts({ name, number }));
             reset();
         }
 
         function reset() {
-            dispatch(setStatusName(''));
-            dispatch(setStatusNumber(''));
+        setName('');
+        setNumber('');
         }
 
         return (
@@ -52,9 +55,9 @@ export const  ContactsForm = () => {
                 pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                 title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 required
-                id={nanoid()}
                 onChange={hendleChange}
                 value={name}
+                id={nanoid()}
               />
             </ContactsLabel>
             <ContactsLabel>
